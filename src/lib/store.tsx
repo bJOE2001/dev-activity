@@ -130,8 +130,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   // Auth
   const login = (username: string, pass: string): boolean => {
     // Accepts admin/password123, belly, or john, or any existing username
+    const u = username.toLowerCase().trim();
     if (
-      (username.toLowerCase() === 'admin' || username.toLowerCase() === user.username.toLowerCase() || username.toLowerCase() === 'john') &&
+      (u === 'admin' || u === 'johnsantos' || u === 'john' || u === 'belly' || u === user.username.toLowerCase()) &&
       pass.length > 0
     ) {
       setIsAuthenticated(true);
