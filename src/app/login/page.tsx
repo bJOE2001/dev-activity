@@ -109,7 +109,7 @@ export default function LoginPage() {
               }}
               placeholder="Enter your username"
               className={`w-full h-11 px-3.5 rounded-lg border text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none transition ${
-                usernameError
+                usernameError || authError
                   ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
                   : 'border-slate-300 focus:border-[#0F1E36] focus:ring-1 focus:ring-[#0F1E36]'
               }`}
@@ -137,7 +137,7 @@ export default function LoginPage() {
                 }}
                 placeholder="Enter your password"
                 className={`w-full h-11 px-3.5 pr-10 rounded-lg border text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none transition ${
-                  passwordError
+                  passwordError || authError
                     ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
                     : 'border-slate-300 focus:border-[#0F1E36] focus:ring-1 focus:ring-[#0F1E36]'
                 }`}
