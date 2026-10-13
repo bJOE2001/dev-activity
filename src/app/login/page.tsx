@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
-import { AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -79,13 +79,25 @@ export default function LoginPage() {
 
         {/* 01.03 Invalid Credentials Error Banner */}
         {authError && (
-          <div className="p-3.5 mb-5 rounded-lg bg-red-50 border border-red-200 flex items-start gap-2.5 animate-in fade-in duration-200">
-            <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+          <div className="p-3.5 mb-5 rounded-xl bg-[#FFF5F5] border border-[#FED7D7] flex items-start gap-3 animate-in fade-in duration-200">
+            {/* Solid filled red circle with white exclamation icon to match Figma exactly */}
+            <svg
+              className="w-5 h-5 text-[#E53E3E] shrink-0 mt-0.5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 5a1 1 0 012 0v5a1 1 0 01-2 0V5zm1 9a1 1 0 100-2 1 1 0 000 2z"
+                clipRule="evenodd"
+              />
+            </svg>
             <div className="text-left">
-              <p className="text-xs font-semibold text-red-900">
+              <p className="text-sm font-semibold text-[#C53030]">
                 Incorrect username or password
               </p>
-              <p className="text-xs text-red-600 mt-0.5">
+              <p className="text-xs text-slate-600 mt-0.5">
                 Please check your details and try again.
               </p>
             </div>
@@ -110,7 +122,7 @@ export default function LoginPage() {
               placeholder="Enter your username"
               className={`w-full h-11 px-3.5 rounded-lg border text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none transition ${
                 usernameError || authError
-                  ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                  ? 'border-[#E53E3E] focus:border-[#E53E3E] ring-0'
                   : 'border-slate-300 focus:border-[#0F1E36] focus:ring-1 focus:ring-[#0F1E36]'
               }`}
             />
@@ -138,7 +150,7 @@ export default function LoginPage() {
                 placeholder="Enter your password"
                 className={`w-full h-11 px-3.5 pr-10 rounded-lg border text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none transition ${
                   passwordError || authError
-                    ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+                    ? 'border-[#E53E3E] focus:border-[#E53E3E] ring-0'
                     : 'border-slate-300 focus:border-[#0F1E36] focus:ring-1 focus:ring-[#0F1E36]'
                 }`}
               />
