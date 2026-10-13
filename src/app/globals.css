@@ -19,3 +19,11 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* Hide Next.js Development Indicator Badge */
+nextjs-portal,
+[data-nextjs-dev-tools-button],
+[data-next-dev-tools-button],
+#next-route-announcer {
+  display: none !important;
+}

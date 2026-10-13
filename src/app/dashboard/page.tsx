@@ -7,31 +7,69 @@ import { formatCurrency } from '@/lib/utils';
 import { Product } from '@/lib/types';
 import { AddStockModal } from '@/components/modals/AddStockModal';
 import {
-  TrendingUp,
+  Boxes,
   Download,
   Plus,
   ChevronDown,
-  Layers,
-  CircleDollarSign,
   ShoppingCart,
   Package,
 } from 'lucide-react';
+
+interface SalesChartPoint {
+  date: string;
+  sales: number;
+  orders: number;
+  svgX: number;
+  svgY: number;
+  leftPercent: number;
+  topPercent: number;
+}
+
+const dailySalesPoints: SalesChartPoint[] = [
+  { date: 'Thu, Oct 1', sales: 20400, orders: 12, svgX: 35, svgY: 132, leftPercent: 5.4, topPercent: 68 },
+  { date: 'Sun, Oct 4', sales: 20100, orders: 11, svgX: 96, svgY: 132, leftPercent: 14.8, topPercent: 68 },
+  { date: 'Wed, Oct 7', sales: 20800, orders: 13, svgX: 158, svgY: 132, leftPercent: 24.3, topPercent: 68 },
+  { date: 'Sat, Oct 10', sales: 21500, orders: 14, svgX: 219, svgY: 131, leftPercent: 33.7, topPercent: 68 },
+  { date: 'Tue, Oct 13', sales: 20900, orders: 12, svgX: 280, svgY: 132, leftPercent: 43.1, topPercent: 68 },
+  { date: 'Fri, Oct 16', sales: 65400, orders: 38, svgX: 345, svgY: 55, leftPercent: 53.1, topPercent: 37 },
+  { date: 'Sat, Oct 17', sales: 69800, orders: 40, svgX: 368, svgY: 35, leftPercent: 56.6, topPercent: 28 },
+  { date: 'Tue, Oct 20', sales: 44200, orders: 26, svgX: 425, svgY: 95, leftPercent: 65.4, topPercent: 52 },
+  { date: 'Thu, Oct 23', sales: 74200, orders: 42, svgX: 486, svgY: 14, leftPercent: 74.8, topPercent: 19 },
+  { date: 'Sun, Oct 26', sales: 20500, orders: 12, svgX: 545, svgY: 132, leftPercent: 83.8, topPercent: 68 },
+  { date: 'Tue, Oct 28', sales: 21200, orders: 13, svgX: 588, svgY: 132, leftPercent: 90.5, topPercent: 68 },
+  { date: 'Fri, Oct 31', sales: 21900, orders: 14, svgX: 650, svgY: 132, leftPercent: 97.0, topPercent: 68 },
+];
+
+const weeklySalesPoints: SalesChartPoint[] = [
+  { date: 'Week 1 (Oct 1–7)', sales: 48200, orders: 172, svgX: 110, svgY: 130, leftPercent: 17, topPercent: 67 },
+  { date: 'Week 2 (Oct 8–14)', sales: 52400, orders: 185, svgX: 260, svgY: 120, leftPercent: 40, topPercent: 62 },
+  { date: 'Week 3 (Oct 15–21)', sales: 78600, orders: 260, svgX: 440, svgY: 50, leftPercent: 68, topPercent: 35 },
+  { date: 'Week 4 (Oct 22–31)', sales: 70800, orders: 276, svgX: 580, svgY: 75, leftPercent: 89, topPercent: 45 },
+];
+
+const monthlySalesPoints: SalesChartPoint[] = [
+  { date: 'August 2026', sales: 195000, orders: 680, svgX: 150, svgY: 100, leftPercent: 23, topPercent: 55 },
+  { date: 'September 2026', sales: 210000, orders: 740, svgX: 380, svgY: 60, leftPercent: 58, topPercent: 38 },
+  { date: 'October 2026', sales: 250000, orders: 893, svgX: 600, svgY: 20, leftPercent: 92, topPercent: 22 },
+];
 
 export default function DashboardPage() {
   const { user, orders, products, addStock, addToast } = useStore();
 
   const [timeView, setTimeView] = useState<'Daily' | 'Weekly' | 'Monthly'>('Daily');
   const [selectedPeriod, setSelectedPeriod] = useState('Oct 1 – Oct 31, 2026');
+  const [hoveredSalesPoint, setHoveredSalesPoint] = useState<SalesChartPoint | null>(null);
 
   // Restock modal state
   const [restockProduct, setRestockProduct] = useState<Product | null>(null);
 
-  // Confirmed orders (non-draft, non-cancelled) added beyond initial mock data
+  // Confirmed orders (non-draft, non-cancelled) added by user in this session (beyond initial mock data)
   const userAddedOrders = useMemo(() => {
     return orders.filter(
       (o) =>
         o.status !== 'Draft' &&
         o.status !== 'Cancelled' &&
+        !o.id.startsWith('ord-00000') &&
         !o.id.startsWith('ord-1') &&
         !o.id.startsWith('ord-2') &&
         !o.id.startsWith('ord-3')
@@ -68,100 +106,100 @@ export default function DashboardPage() {
 
   // Payment Methods Donut (Cash 58%, Bank Transfer 32%, Check 10%)
   const paymentMethods = [
-    { name: 'Cash', amount: 145000, share: 58, color: '#10B981' },
-    { name: 'Bank Transfer', amount: 80000, share: 32, color: '#0F1E36' },
-    { name: 'Check', amount: 25000, share: 10, color: '#F59E0B' },
+    { name: 'Cash', amount: 145000, share: 58, color: '#0F1E36' },
+    { name: 'Bank Transfer', amount: 80000, share: 32, color: '#10B981' },
+    { name: 'Check', amount: 25000, share: 10, color: '#8A99AD' },
   ];
 
   // Top Selling Products matching Figma 02.01 exactly
   const topSellingProducts = [
     {
       rank: 1,
-      name: 'Coca-Cola 1.5L',
-      category: 'Beverages',
-      qtySold: '1,240',
-      price: 85.0,
-      totalAmount: 105400.0,
-      share: 41,
+      name: 'Organic Wildflower Honey 350ml',
+      category: 'Pantry & Essentials',
+      qtySold: '14',
+      price: 450.0,
+      totalAmount: 6300.0,
+      share: 35,
     },
     {
       rank: 2,
-      name: 'Gardenia Classic Loaf',
-      category: 'Bakery',
-      qtySold: '720',
-      price: 72.0,
-      totalAmount: 51840.0,
-      share: 20,
+      name: 'Artisan Cold Brew Coffee 330ml',
+      category: 'Beverages',
+      qtySold: '25',
+      price: 140.0,
+      totalAmount: 3500.0,
+      share: 19,
     },
     {
       rank: 3,
-      name: 'Safeguard Bar Soap',
-      category: 'Personal Care',
-      qtySold: '980',
-      price: 48.0,
-      totalAmount: 47040.0,
-      share: 18,
+      name: 'Butter Croissant (Box of 4)',
+      category: 'Bakery & Pastries',
+      qtySold: '10',
+      price: 260.0,
+      totalAmount: 2600.0,
+      share: 15,
     },
     {
       rank: 4,
-      name: 'Alaska Evap Milk',
-      category: 'Dairy',
-      qtySold: '860',
-      price: 42.0,
-      totalAmount: 36120.0,
-      share: 14,
+      name: 'Salted Caramel Macarons',
+      category: 'Snacks & Confectionery',
+      qtySold: '7',
+      price: 320.0,
+      totalAmount: 2240.0,
+      share: 12,
     },
     {
       rank: 5,
-      name: 'Lucky Me Pancit Canton',
-      category: 'Snacks',
-      qtySold: '1,120',
-      price: 15.0,
-      totalAmount: 16800.0,
-      share: 7,
+      name: 'Matcha Green Tea Latte 500ml',
+      category: 'Beverages',
+      qtySold: '10',
+      price: 180.0,
+      totalAmount: 1800.0,
+      share: 10,
     },
   ];
 
-  // Low Stock Products matching Figma 02.01
+  // Low Stock Products matching earlier items
   const lowStockList = [
     {
-      id: 'prod-1',
-      sku: 'SKU-10293',
-      name: 'Coca-Cola 1.5L',
-      min: 24,
-      unitsLeft: 2,
+      id: 'prod-2',
+      sku: 'BEV-002',
+      name: 'Matcha Green Tea Latte...',
+      min: 12,
+      unitsLeft: 0,
       badgeColor: 'text-red-600 bg-red-50 border-red-200',
     },
     {
-      id: 'prod-2',
-      sku: 'SKU-20481',
-      name: 'Lucky Me Pancit C...',
-      min: 48,
+      id: 'prod-4',
+      sku: 'BAK-002',
+      name: 'Sourdough Country Loaf...',
+      min: 10,
       unitsLeft: 4,
       badgeColor: 'text-red-600 bg-red-50 border-red-200',
     },
     {
-      id: 'prod-3',
-      sku: 'SKU-31720',
-      name: 'Safeguard Bar Soap',
-      min: 36,
-      unitsLeft: 6,
-      badgeColor: 'text-amber-600 bg-amber-50 border-amber-200',
+      id: 'prod-7',
+      sku: 'DAI-001',
+      name: 'Imported Gouda Cheese...',
+      min: 10,
+      unitsLeft: 0,
+      badgeColor: 'text-red-600 bg-red-50 border-red-200',
     },
     {
-      id: 'prod-4',
-      sku: 'SKU-40117',
-      name: 'Alaska Evap Milk',
-      min: 40,
-      unitsLeft: 8,
+      id: 'prod-3',
+      sku: 'BAK-001',
+      name: 'Butter Croissant (Box of 4)',
+      min: 10,
+      unitsLeft: 5,
       badgeColor: 'text-amber-600 bg-amber-50 border-amber-200',
     },
     {
       id: 'prod-5',
-      sku: 'SKU-55002',
-      name: 'Gardenia Classic L...',
-      min: 30,
-      unitsLeft: 9,
+      sku: 'SNK-001',
+      name: 'Salted Caramel Macarons...',
+      min: 8,
+      unitsLeft: 6,
       badgeColor: 'text-amber-600 bg-amber-50 border-amber-200',
     },
   ];
@@ -252,7 +290,7 @@ export default function DashboardPage() {
             className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0F1E36] hover:bg-[#162744] text-white rounded-lg text-xs font-semibold shadow-sm transition"
           >
             <Plus className="w-3.5 h-3.5" />
-            + Create Order
+            Create Order
           </Link>
         </div>
       </div>
@@ -262,8 +300,23 @@ export default function DashboardPage() {
         {/* Total Sales */}
         <div className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-2xs space-y-3">
           <div className="flex items-center gap-2.5">
+            {/* Custom SVG: 3 pill bars + diagonal curved arrow matching Figma */}
             <div className="w-8 h-8 rounded-lg bg-[#0F1E36] text-white flex items-center justify-center shrink-0">
-              <TrendingUp className="w-4 h-4" />
+              <svg
+                className="w-4 h-4 text-white"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M4 14C7 11 11 6 19 5" />
+                <path d="M15 5h4v4" />
+                <rect x="5" y="16" width="2.5" height="5" rx="1.2" fill="currentColor" stroke="none" />
+                <rect x="10.5" y="13" width="2.5" height="8" rx="1.2" fill="currentColor" stroke="none" />
+                <rect x="16" y="9" width="2.5" height="12" rx="1.2" fill="currentColor" stroke="none" />
+              </svg>
             </div>
             <span className="text-xs font-medium text-slate-500">Total Sales</span>
           </div>
@@ -275,8 +328,9 @@ export default function DashboardPage() {
         {/* Total Cost */}
         <div className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-2xs space-y-3">
           <div className="flex items-center gap-2.5">
+            {/* Boxes icon (3 isometric cubes arranged in triangle matching Figma) */}
             <div className="w-8 h-8 rounded-lg bg-[#0F1E36] text-white flex items-center justify-center shrink-0">
-              <Layers className="w-4 h-4" />
+              <Boxes className="w-4 h-4 text-white" />
             </div>
             <span className="text-xs font-medium text-slate-500">Total Cost</span>
           </div>
@@ -288,8 +342,23 @@ export default function DashboardPage() {
         {/* Total Net Sales */}
         <div className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-2xs space-y-3">
           <div className="flex items-center gap-2.5">
+            {/* Custom SVG: Stack of Banknotes / paper cash bills matching Figma */}
             <div className="w-8 h-8 rounded-lg bg-[#0F1E36] text-white flex items-center justify-center shrink-0">
-              <CircleDollarSign className="w-4 h-4" />
+              <svg
+                className="w-4.5 h-4.5 text-white"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="4" width="18" height="11" rx="2" />
+                <circle cx="12" cy="9.5" r="2" />
+                <path d="M6 9.5h.01M18 9.5h.01" />
+                <path d="M5 18h14" />
+                <path d="M3 21h18" />
+              </svg>
             </div>
             <span className="text-xs font-medium text-slate-500">Total Net Sales</span>
           </div>
@@ -301,8 +370,9 @@ export default function DashboardPage() {
         {/* Number of Orders */}
         <div className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-2xs space-y-3">
           <div className="flex items-center gap-2.5">
+            {/* Shopping Cart matching Figma */}
             <div className="w-8 h-8 rounded-lg bg-[#0F1E36] text-white flex items-center justify-center shrink-0">
-              <ShoppingCart className="w-4 h-4" />
+              <ShoppingCart className="w-4 h-4 text-white stroke-[2]" />
             </div>
             <span className="text-xs font-medium text-slate-500">Number of Orders</span>
           </div>
@@ -313,13 +383,19 @@ export default function DashboardPage() {
       </div>
 
       {/* Row 2: Sales Overview Chart (2 cols) & (Payment Status + Payment Methods) (1 col) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         {/* Sales Overview Chart (2 cols) */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+        <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200/90 shadow-2xs flex flex-col justify-between h-full">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div>
               <h2 className="text-sm font-bold text-[#0F1E36]">Sales Overview</h2>
-              <p className="text-xs text-slate-400 mt-0.5">Daily revenue, October 2026</p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {timeView === 'Daily'
+                  ? 'Daily revenue, October 2026'
+                  : timeView === 'Weekly'
+                  ? 'Weekly revenue, October 2026'
+                  : 'Monthly revenue, 2026'}
+              </p>
             </div>
 
             {/* Daily / Weekly / Monthly Switcher */}
@@ -328,7 +404,10 @@ export default function DashboardPage() {
                 <button
                   key={view}
                   type="button"
-                  onClick={() => setTimeView(view)}
+                  onClick={() => {
+                    setTimeView(view);
+                    setHoveredSalesPoint(null);
+                  }}
                   className={`px-3 py-1 text-xs font-medium rounded-md transition cursor-pointer ${
                     timeView === view
                       ? 'bg-white text-slate-900 shadow-2xs font-semibold'
@@ -342,20 +421,50 @@ export default function DashboardPage() {
           </div>
 
           {/* SVG Smooth Curve Area Chart matching Figma 02.01 */}
-          <div className="relative w-full h-[230px] select-none pt-4">
-            {/* Floating Tooltip at Thu, Oct 23 Peak */}
-            <div
-              className="absolute z-20 pointer-events-none -translate-x-1/2 -translate-y-full mb-3"
-              style={{ left: '74.5%', top: '22%' }}
-            >
-              <div className="bg-[#0F1E36] text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-slate-800 text-center w-28">
-                <p className="text-[10px] text-slate-300">Thu, Oct 23</p>
-                <p className="text-xs font-bold text-white mt-0.5">₱74,200.00</p>
-                <p className="text-[10px] text-slate-300 mt-0.5">42 orders</p>
+          <div className="relative w-full flex-1 min-h-[230px] flex flex-col justify-between select-none pt-4">
+            {/* Floating Tooltip - only rendered when hovered */}
+            {hoveredSalesPoint && (
+              <div
+                className="absolute z-20 pointer-events-none -translate-x-1/2 -translate-y-full mb-3 transition-all duration-75 ease-out"
+                style={{
+                  left: `${hoveredSalesPoint.leftPercent}%`,
+                  top: `${hoveredSalesPoint.topPercent}%`,
+                }}
+              >
+                <div className="bg-[#0F1E36] text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-slate-800 text-center w-28">
+                  <p className="text-[10px] text-slate-300">{hoveredSalesPoint.date}</p>
+                  <p className="text-xs font-bold text-white mt-0.5">{formatCurrency(hoveredSalesPoint.sales)}</p>
+                  <p className="text-[10px] text-slate-300 mt-0.5">{hoveredSalesPoint.orders} orders</p>
+                </div>
               </div>
-            </div>
+            )}
 
-            <svg viewBox="0 0 650 180" className="w-full h-full overflow-visible">
+            <svg
+              viewBox="0 0 650 180"
+              className="w-full h-full overflow-visible cursor-crosshair"
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const svgX = (mouseX / rect.width) * 650;
+                const points =
+                  timeView === 'Weekly'
+                    ? weeklySalesPoints
+                    : timeView === 'Monthly'
+                    ? monthlySalesPoints
+                    : dailySalesPoints;
+                let closest = points[0];
+                let minDiff = Math.abs(closest.svgX - svgX);
+                for (const pt of points) {
+                  const diff = Math.abs(pt.svgX - svgX);
+                  if (diff < minDiff) {
+                    minDiff = diff;
+                    closest = pt;
+                  }
+                }
+                setHoveredSalesPoint(closest);
+              }}
+              onMouseLeave={() => setHoveredSalesPoint(null)}
+            >
               <defs>
                 <linearGradient id="figmaChartGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#0F1E36" stopOpacity="0.08" />
@@ -379,53 +488,128 @@ export default function DashboardPage() {
               <text x="12" y="175" fill="#94A3B8" fontSize="10" fontWeight="500">0</text>
               <line x1="30" y1="172" x2="650" y2="172" stroke="#E2E8F0" strokeWidth="1" />
 
-              {/* Smooth Spline Curve matching Figma */}
-              <path
-                d="M 35 132 C 80 132, 130 132, 180 131 C 230 130, 270 132, 305 128 C 330 125, 345 105, 360 88 C 385 60, 420 30, 450 20 C 470 14, 480 12, 485 12 C 495 12, 505 50, 520 85 C 530 105, 540 85, 550 82 C 565 80, 575 128, 595 132 C 620 132, 635 131, 650 131 L 650 172 L 35 172 Z"
-                fill="url(#figmaChartGrad)"
-              />
+              {/* Smooth Spline Curve matching Figma based on timeView */}
+              {timeView === 'Weekly' ? (
+                <>
+                  <path
+                    d="M 35 140 C 120 135, 180 130, 260 120 C 340 105, 380 60, 440 50 C 500 42, 530 65, 580 75 C 610 82, 630 85, 650 85 L 650 172 L 35 172 Z"
+                    fill="url(#figmaChartGrad)"
+                  />
+                  <path
+                    d="M 35 140 C 120 135, 180 130, 260 120 C 340 105, 380 60, 440 50 C 500 42, 530 65, 580 75 C 610 82, 630 85, 650 85"
+                    fill="none"
+                    stroke="#0F1E36"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </>
+              ) : timeView === 'Monthly' ? (
+                <>
+                  <path
+                    d="M 35 110 C 160 100, 260 90, 380 60 C 470 38, 540 25, 600 20 C 625 18, 640 16, 650 15 L 650 172 L 35 172 Z"
+                    fill="url(#figmaChartGrad)"
+                  />
+                  <path
+                    d="M 35 110 C 160 100, 260 90, 380 60 C 470 38, 540 25, 600 20 C 625 18, 640 16, 650 15"
+                    fill="none"
+                    stroke="#0F1E36"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </>
+              ) : (
+                <>
+                  <path
+                    d="M 35 132 L 280 132 C 300 132, 320 110, 335 70 C 348 38, 360 35, 370 40 C 385 48, 400 85, 420 95 C 438 104, 452 75, 470 30 C 478 14, 483 12, 486 12 C 492 12, 498 30, 508 65 C 520 105, 532 132, 548 132 L 650 132 L 650 172 L 35 172 Z"
+                    fill="url(#figmaChartGrad)"
+                  />
+                  <path
+                    d="M 35 132 L 280 132 C 300 132, 320 110, 335 70 C 348 38, 360 35, 370 40 C 385 48, 400 85, 420 95 C 438 104, 452 75, 470 30 C 478 14, 483 12, 486 12 C 492 12, 498 30, 508 65 C 520 105, 532 132, 548 132 L 650 132"
+                    fill="none"
+                    stroke="#0F1E36"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </>
+              )}
 
-              <path
-                d="M 35 132 C 80 132, 130 132, 180 131 C 230 130, 270 132, 305 128 C 330 125, 345 105, 360 88 C 385 60, 420 30, 450 20 C 470 14, 480 12, 485 12 C 495 12, 505 50, 520 85 C 530 105, 540 85, 550 82 C 565 80, 575 128, 595 132 C 620 132, 635 131, 650 131"
-                fill="none"
-                stroke="#0F1E36"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-
-              {/* Peak indicator dot on Day 23 */}
-              <circle
-                cx="485"
-                cy="12"
-                r="4.5"
-                fill="#FFFFFF"
-                stroke="#0F1E36"
-                strokeWidth="2.5"
-              />
+              {/* Active hover dot & guideline, or peak dot when not hovered */}
+              {hoveredSalesPoint ? (
+                <>
+                  <line
+                    x1={hoveredSalesPoint.svgX}
+                    y1={hoveredSalesPoint.svgY}
+                    x2={hoveredSalesPoint.svgX}
+                    y2="172"
+                    stroke="#CBD5E1"
+                    strokeWidth="1"
+                    strokeDasharray="3 3"
+                  />
+                  <circle
+                    cx={hoveredSalesPoint.svgX}
+                    cy={hoveredSalesPoint.svgY}
+                    r="4.5"
+                    fill="#FFFFFF"
+                    stroke="#0F1E36"
+                    strokeWidth="2.5"
+                  />
+                </>
+              ) : timeView === 'Daily' ? (
+                /* Peak indicator dot on Day 23 */
+                <circle
+                  cx="486"
+                  cy="12"
+                  r="4.5"
+                  fill="#FFFFFF"
+                  stroke="#0F1E36"
+                  strokeWidth="2.5"
+                  className="cursor-pointer"
+                  onMouseEnter={() =>
+                    setHoveredSalesPoint(dailySalesPoints.find((p) => p.date === 'Thu, Oct 23') || null)
+                  }
+                />
+              ) : null}
             </svg>
 
             {/* X-axis labels matching Figma 02.01 */}
-            <div className="flex justify-between text-[11px] font-medium text-slate-400 mt-2 pl-7 pr-1">
-              <span>1</span>
-              <span>4</span>
-              <span>7</span>
-              <span>10</span>
-              <span>13</span>
-              <span>16</span>
-              <span>19</span>
-              <span>22</span>
-              <span>25</span>
-              <span>28</span>
-              <span>31</span>
-            </div>
+            {timeView === 'Weekly' ? (
+              <div className="flex justify-around text-[11px] font-medium text-slate-400 mt-2 pl-7 pr-1">
+                <span>Week 1 (Oct 1–7)</span>
+                <span>Week 2 (Oct 8–14)</span>
+                <span>Week 3 (Oct 15–21)</span>
+                <span>Week 4 (Oct 22–31)</span>
+              </div>
+            ) : timeView === 'Monthly' ? (
+              <div className="flex justify-around text-[11px] font-medium text-slate-400 mt-2 pl-7 pr-1">
+                <span>August 2026</span>
+                <span>September 2026</span>
+                <span>October 2026</span>
+              </div>
+            ) : (
+              <div className="flex justify-between text-[11px] font-medium text-slate-400 mt-2 pl-7 pr-1">
+                <span>1</span>
+                <span>4</span>
+                <span>7</span>
+                <span>10</span>
+                <span>13</span>
+                <span>16</span>
+                <span>19</span>
+                <span>22</span>
+                <span>25</span>
+                <span>28</span>
+                <span>31</span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Right Column: Payment Status & Payment Methods */}
-        <div className="space-y-6">
+        <div className="flex flex-col justify-between gap-6 h-full">
           {/* Payment Status Card */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-2xs space-y-4">
+          <div className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-2xs space-y-4 flex-1 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-[#0F1E36]">Payment Status</h2>
               <span className="text-xs text-slate-400 font-medium">893 orders</span>
@@ -464,50 +648,50 @@ export default function DashboardPage() {
           </div>
 
           {/* Payment Methods Card */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-2xs space-y-4">
+          <div className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-2xs space-y-4 flex-1 flex flex-col justify-between">
             <h2 className="text-sm font-bold text-[#0F1E36]">Payment Methods</h2>
 
             <div className="flex items-center gap-6">
               {/* Donut Chart */}
               <div className="relative w-28 h-28 shrink-0 flex items-center justify-center">
                 <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                  {/* Cash: 58% (circumference ~ 282.7) */}
+                  {/* Cash: 58% (Dark Navy #0F1E36) */}
                   <circle
                     cx="50"
                     cy="50"
-                    r="45"
-                    fill="transparent"
-                    stroke="#10B981"
-                    strokeWidth="12"
-                    strokeDasharray="164 119"
-                    strokeDashoffset="0"
-                  />
-                  {/* Bank Transfer: 32% */}
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="45"
+                    r="40"
                     fill="transparent"
                     stroke="#0F1E36"
-                    strokeWidth="12"
-                    strokeDasharray="90 193"
-                    strokeDashoffset="-164"
+                    strokeWidth="11"
+                    strokeDasharray="142 109"
+                    strokeDashoffset="-2"
                   />
-                  {/* Check: 10% */}
+                  {/* Bank Transfer: 32% (Green #10B981) */}
                   <circle
                     cx="50"
                     cy="50"
-                    r="45"
+                    r="40"
                     fill="transparent"
-                    stroke="#F59E0B"
-                    strokeWidth="12"
-                    strokeDasharray="28 255"
-                    strokeDashoffset="-254"
+                    stroke="#10B981"
+                    strokeWidth="11"
+                    strokeDasharray="77 174"
+                    strokeDashoffset="-148"
+                  />
+                  {/* Check: 10% (Slate/Gray #8A99AD) */}
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    fill="transparent"
+                    stroke="#8A99AD"
+                    strokeWidth="11"
+                    strokeDasharray="22 229"
+                    strokeDashoffset="-228"
                   />
                 </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none">
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
                   <span className="text-[10px] text-slate-400 font-medium">Total</span>
-                  <span className="text-base font-bold text-[#0F1E36] leading-none mt-0.5">
+                  <span className="text-sm font-bold text-[#0F1E36] leading-none mt-0.5">
                     ₱250k
                   </span>
                 </div>
@@ -541,9 +725,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Row 3: Top Selling Products (2 cols) & Low Stock Products (1 col) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         {/* Top Selling Products Table */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200/90 shadow-2xs space-y-4">
+        <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200/90 shadow-2xs space-y-4 h-full flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-bold text-[#0F1E36]">Top Selling Products</h2>
@@ -608,7 +792,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Low Stock Products List */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-2xs space-y-4">
+        <div className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-2xs space-y-4 h-full flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-[#0F1E36]">Low Stock Products</h2>
             <Link

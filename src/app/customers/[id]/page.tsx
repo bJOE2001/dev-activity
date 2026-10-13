@@ -77,45 +77,33 @@ export default function CustomerDetailsPage({
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link
             href="/customers"
-            className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition"
+            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-slate-700" />
           </Link>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold tracking-tight text-slate-900">
-                {customer.name}
-              </h1>
-              <StatusBadge status={customer.status} />
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Customer since {formatDate(customer.createdAt)}
-            </p>
-          </div>
+          <h1 className="text-xl font-bold tracking-tight text-slate-900">
+            Customer Details
+          </h1>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setIsEditModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-semibold transition"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium transition cursor-pointer"
           >
-            <Edit className="w-3.5 h-3.5" />
-            Edit Information
+            <Trash2 className="w-3.5 h-3.5" />
+            Delete
           </button>
 
           <button
             type="button"
             onClick={handleToggleStatus}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
-              customer.status === 'Active'
-                ? 'border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100'
-                : 'border border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-            }`}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium transition cursor-pointer"
           >
             <Power className="w-3.5 h-3.5" />
             {customer.status === 'Active' ? 'Set Inactive' : 'Set Active'}
@@ -123,144 +111,104 @@ export default function CustomerDetailsPage({
 
           <button
             type="button"
-            onClick={() => setIsDeleteModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-semibold transition"
+            onClick={() => setIsEditModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium transition cursor-pointer"
           >
-            <Trash2 className="w-3.5 h-3.5" />
-            Delete
+            <Edit className="w-3.5 h-3.5" />
+            Edit Information
           </button>
         </div>
       </div>
 
-      {/* Profile & KPI Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Customer Information (1 col) */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
+      {/* Main Content Grid: Customer Info (Left) & Order List (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Customer Information Card (1 col) */}
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-3.5">
+          <h2 className="text-xs font-bold text-slate-900">
             Customer Information
           </h2>
 
           <div className="space-y-3 text-xs">
-            <div className="flex items-start gap-2.5 text-slate-700">
-              <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-semibold text-slate-900">Delivery Address</p>
-                <p className="text-slate-600 mt-0.5">{customer.address || 'No address provided'}</p>
-              </div>
+            <div>
+              <p className="text-slate-400 font-medium">Customer Name</p>
+              <p className="text-slate-900 font-bold mt-0.5">{customer.name}</p>
             </div>
-
-            <div className="flex items-center gap-2.5 text-slate-700 pt-1">
-              <Phone className="w-4 h-4 text-slate-400 shrink-0" />
-              <div>
-                <p className="font-semibold text-slate-900">Phone</p>
-                <p className="text-slate-600 font-mono">{customer.phone || '—'}</p>
-              </div>
+            <div>
+              <p className="text-slate-400 font-medium">Address</p>
+              <p className="text-slate-900 font-bold mt-0.5">{customer.address || '—'}</p>
             </div>
-
-            <div className="flex items-center gap-2.5 text-slate-700 pt-1">
-              <Mail className="w-4 h-4 text-slate-400 shrink-0" />
-              <div>
-                <p className="font-semibold text-slate-900">Email</p>
-                <p className="text-slate-600">{customer.email || '—'}</p>
-              </div>
+            <div>
+              <p className="text-slate-400 font-medium">Phone Number</p>
+              <p className="text-slate-900 font-bold mt-0.5">{customer.phone || '—'}</p>
+            </div>
+            <div>
+              <p className="text-slate-400 font-medium">E-mail Address</p>
+              <p className="text-slate-900 font-normal mt-0.5">{customer.email || '—'}</p>
             </div>
           </div>
         </div>
 
-        {/* Transaction Summary (2 cols) */}
-        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Total Transactions
-            </span>
-            <p className="text-xl font-bold text-slate-900">{formatCurrency(totalSpent)}</p>
-            <p className="text-xs text-slate-400">Lifetime confirmed orders</p>
+        {/* Order List Table Card (2 cols) */}
+        <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+          <div className="p-4 border-b border-slate-100">
+            <h2 className="text-xs font-bold text-slate-900">Order List</h2>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Outstanding Balance
-            </span>
-            <p className="text-xl font-bold text-amber-600">{formatCurrency(outstandingBalance)}</p>
-            <p className="text-xs text-slate-400">Pending customer settlement</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Total Orders
-            </span>
-            <p className="text-xl font-bold text-slate-900">{customerOrders.length}</p>
-            <p className="text-xs text-slate-400">In system database</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Customer's Order History */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-base font-bold text-slate-900">Customer Order History</h2>
-          <Link
-            href="/orders/create"
-            className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
-          >
-            + Create New Order for {customer.name}
-          </Link>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-[11px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
-              <tr>
-                <th className="py-3 px-5">Order No.</th>
-                <th className="py-3 px-5">Order Date</th>
-                <th className="py-3 px-5">Payment Type</th>
-                <th className="py-3 px-5 text-right">Total</th>
-                <th className="py-3 px-5 text-right">Balance</th>
-                <th className="py-3 px-5 text-center">Status</th>
-                <th className="py-3 px-5 text-right w-16">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {customerOrders.length === 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F7F9FC] text-slate-600 font-medium border-b border-slate-200">
                 <tr>
-                  <td colSpan={7} className="py-10 text-center text-slate-400 text-xs">
-                    No orders recorded for this customer yet.
-                  </td>
+                  <th className="py-2.5 px-4 font-medium">
+                    <div className="inline-flex items-center gap-1 cursor-pointer">
+                      <span>Order No.</span>
+                      <span className="text-[10px]">⌵</span>
+                    </div>
+                  </th>
+                  <th className="py-2.5 px-4 font-medium">Order Date</th>
+                  <th className="py-2.5 px-4 font-medium">Payment Type</th>
+                  <th className="py-2.5 px-4 font-medium text-right">Total</th>
+                  <th className="py-2.5 px-4 font-medium text-right">Balance</th>
                 </tr>
-              ) : (
-                customerOrders.map((o) => (
-                  <tr key={o.id} className="hover:bg-slate-50/80 transition">
-                    <td className="py-3.5 px-5 font-mono font-bold text-xs text-slate-900">
-                      #{o.orderNumber}
-                    </td>
-                    <td className="py-3.5 px-5 text-xs text-slate-600">
-                      {formatDate(o.orderDate)}
-                    </td>
-                    <td className="py-3.5 px-5 text-xs text-slate-600 font-medium">
-                      {o.paymentType}
-                    </td>
-                    <td className="py-3.5 px-5 text-right font-bold text-xs text-slate-900">
-                      {formatCurrency(o.total)}
-                    </td>
-                    <td className="py-3.5 px-5 text-right font-semibold text-xs text-slate-700">
-                      {formatCurrency(o.balance)}
-                    </td>
-                    <td className="py-3.5 px-5 text-center">
-                      <StatusBadge status={o.status} />
-                    </td>
-                    <td className="py-3.5 px-5 text-right">
-                      <Link
-                        href={`/orders/${o.id}`}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition inline-block"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Link>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {customerOrders.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-slate-400">
+                      No orders found for this customer.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  customerOrders.map((o) => (
+                    <tr key={o.id} className="hover:bg-slate-50/60 transition">
+                      <td className="py-3 px-4 font-mono text-slate-800">
+                        <Link href={`/orders/${o.id}`} className="hover:underline hover:text-blue-600">
+                          {o.orderNumber}
+                        </Link>
+                      </td>
+                      <td className="py-3 px-4 text-slate-700">
+                        {formatDate(o.orderDate)}
+                      </td>
+                      <td className="py-3 px-4 text-slate-700">
+                        {o.paymentType}
+                      </td>
+                      <td className="py-3 px-4 text-right text-slate-800">
+                        {o.total.toLocaleString('en-US', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </td>
+                      <td className="py-3 px-4 text-right text-slate-800">
+                        {o.balance.toLocaleString('en-US', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

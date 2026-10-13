@@ -49,120 +49,79 @@ export default function CategoryListPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Category List</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
-            Organize products into structured inventory groupings
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setIsAddModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition shadow-xs self-start sm:self-auto cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          + Add Category
-        </button>
+    <div className="mx-auto w-full max-w-[1400px] space-y-5">
+      {/* Page Heading */}
+      <div>
+        <h1 className="text-[22px] font-semibold tracking-tight text-[#172033]">
+          Category List
+        </h1>
       </div>
 
-      {/* Search Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            placeholder="Search Category..."
-            className="w-full h-10 pl-9 pr-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
-          />
-        </div>
+      {/* Category List Container */}
+      <section className="overflow-hidden rounded-xl border border-[#E5EAF2] bg-white">
+        {/* Search and Add Category Bar */}
+        <div className="flex min-h-[49px] flex-wrap items-center gap-2.5 border-b border-[#EDF0F5] px-3 py-2.5 sm:px-3">
+          <div className="relative w-full sm:w-[192px]">
+            <Search className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#263650]" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search Category"
+              className="h-[29px] w-full rounded-lg border border-[#E5EAF2] bg-white pl-3 pr-8 text-[11px] text-[#25324A] outline-none transition placeholder:text-[#9AA8BC] focus:border-[#102348] focus:ring-1 focus:ring-[#102348]/10"
+            />
+          </div>
 
-        <div className="flex items-center gap-3 self-end sm:self-auto text-xs text-slate-500">
-          <span>Rows per page:</span>
-          <select
-            value={rowsPerPage}
-            onChange={(e) => {
-              setRowsPerPage(Number(e.target.value));
-              setCurrentPage(1);
-            }}
-            className="h-9 px-2.5 rounded-xl border border-slate-200 bg-white font-medium text-slate-700 focus:outline-none cursor-pointer"
+          <button
+            type="button"
+            onClick={() => setIsAddModalOpen(true)}
+            className="inline-flex h-[29px] items-center justify-center gap-1.5 rounded-lg bg-[#0B1F44] px-3 text-[11px] font-medium text-white transition hover:bg-[#173363] cursor-pointer"
           >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-          </select>
+            <Plus className="h-3 w-3" />
+            Add Category
+          </button>
         </div>
-      </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+        {/* Category Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-[11px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-200">
-              <tr>
-                <th
-                  onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
-                  className="py-3 px-5 cursor-pointer hover:text-slate-900 transition select-none"
-                >
-                  <div className="flex items-center gap-1.5">
-                    Category Name
-                    <ArrowUpDown className="w-3.5 h-3.5" />
+          <table className="w-full min-w-[500px] border-collapse text-left">
+            <thead>
+              <tr className="h-[31px] border-b border-[#EDF0F5] bg-[#F7F9FC] text-[10px] font-medium text-[#263650]">
+                <th className="px-3 font-medium">
+                  <div
+                    onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+                    className="inline-flex items-center gap-1 cursor-pointer select-none hover:text-[#0B1F44]"
+                  >
+                    <span>Category</span>
+                    <span className="text-[10px]">⌵</span>
                   </div>
                 </th>
-                <th className="py-3 px-5">Products Count</th>
-                <th className="py-3 px-5 text-center">Status</th>
-                <th className="py-3 px-5 text-right w-20">Action</th>
+                <th className="px-3 font-medium text-right sm:text-left">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[#EDF0F5] text-[11px] text-[#25324A]">
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-12 text-center text-slate-400">
-                    <FolderTree className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                    <p className="font-semibold text-slate-600">No categories found</p>
-                    <p className="text-xs text-slate-400 mt-1">Try another search term or create a new category.</p>
+                  <td colSpan={2} className="py-8 text-center text-slate-400">
+                    No categories found matching &quot;{search}&quot;.
                   </td>
                 </tr>
               ) : (
                 paginated.map((cat) => {
-                  const count = getProductCountForCategory(cat.id);
                   return (
                     <tr
                       key={cat.id}
                       onClick={() => setSelectedCategory(cat)}
-                      className="hover:bg-slate-50/80 transition cursor-pointer group"
+                      className="h-[40px] hover:bg-[#F9FBFC] transition cursor-pointer"
                     >
-                      <td className="py-3.5 px-5 font-semibold text-slate-900 text-xs">
+                      <td className="px-3 py-2 text-[#25324A]">
                         {cat.name}
                       </td>
-                      <td className="py-3.5 px-5 text-xs">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
-                          {count} {count === 1 ? 'product uses' : 'products use'} this category
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-5 text-center">
+                      <td className="px-3 py-2 text-right sm:text-left">
                         <StatusBadge status={cat.status} />
-                      </td>
-                      <td className="py-3.5 px-5 text-right">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedCategory(cat);
-                          }}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition"
-                          title="Edit Category Details"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
                       </td>
                     </tr>
                   );
@@ -173,42 +132,81 @@ export default function CategoryListPage() {
         </div>
 
         {/* Pagination Bar */}
-        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-          <div>
-            Showing{' '}
-            <strong className="text-slate-800">
-              {total > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0}
-            </strong>{' '}
-            –{' '}
-            <strong className="text-slate-800">
-              {Math.min(currentPage * rowsPerPage, total)}
-            </strong>{' '}
-            of <strong className="text-slate-800">{total}</strong> categories
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-3 py-2.5 text-[11px] text-[#55657E] border-t border-[#EDF0F5]">
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <select
+                value={rowsPerPage}
+                onChange={(e) => {
+                  setRowsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="h-[25px] rounded border border-[#E5EAF2] bg-white px-2 pr-6 text-[11px] text-[#25324A] outline-none appearance-none cursor-pointer"
+              >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+              <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-[#55657E]">
+                ⌵
+              </span>
+            </div>
+            <span>
+              {total > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0} -{' '}
+              {Math.min(currentPage * rowsPerPage, total)} of {total}
+            </span>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             <button
               type="button"
               disabled={currentPage <= 1}
               onClick={() => setCurrentPage((p) => p - 1)}
-              className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition"
+              className="flex h-[25px] w-[25px] items-center justify-center rounded border border-[#E5EAF2] bg-white text-[#55657E] disabled:opacity-40 hover:bg-[#F8FAFC] cursor-pointer"
             >
-              <ChevronLeft className="w-4 h-4" />
+              &lt;
             </button>
-            <span className="px-3 font-semibold text-slate-700">
-              Page {currentPage} of {totalPages}
-            </span>
+            {Array.from({ length: Math.min(totalPages, 3) }, (_, i) => i + 1).map((pg) => (
+              <button
+                key={pg}
+                type="button"
+                onClick={() => setCurrentPage(pg)}
+                className={`flex h-[25px] w-[25px] items-center justify-center rounded text-[11px] font-medium transition cursor-pointer ${
+                  currentPage === pg
+                    ? 'bg-[#0B1F44] text-white'
+                    : 'border border-[#E5EAF2] bg-white text-[#55657E] hover:bg-[#F8FAFC]'
+                }`}
+              >
+                {pg}
+              </button>
+            ))}
+            {totalPages > 3 && (
+              <>
+                <span className="px-1 text-[#8A99AD]">...</span>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(totalPages)}
+                  className={`flex h-[25px] w-[25px] items-center justify-center rounded text-[11px] font-medium transition cursor-pointer ${
+                    currentPage === totalPages
+                      ? 'bg-[#0B1F44] text-white'
+                      : 'border border-[#E5EAF2] bg-white text-[#55657E] hover:bg-[#F8FAFC]'
+                  }`}
+                >
+                  {totalPages}
+                </button>
+              </>
+            )}
             <button
               type="button"
               disabled={currentPage >= totalPages}
               onClick={() => setCurrentPage((p) => p + 1)}
-              className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition"
+              className="flex h-[25px] w-[25px] items-center justify-center rounded border border-[#E5EAF2] bg-white text-[#55657E] disabled:opacity-40 hover:bg-[#F8FAFC] cursor-pointer"
             >
-              <ChevronRight className="w-4 h-4" />
+              &gt;
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Modals */}
       <AddCategoryModal

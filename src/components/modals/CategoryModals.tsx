@@ -32,26 +32,22 @@ export function AddCategoryModal({ isOpen, onClose, onAddCategory }: AddCategory
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-slate-100 rounded-lg text-slate-700">
-              <FolderPlus className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Add New Category</h3>
-              <p className="text-xs text-slate-500">Create a category to group your products</p>
-            </div>
+      <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-sm overflow-hidden">
+        {/* Header */}
+        <div className="px-5 pt-4 pb-1 flex items-start justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900">Add New Category</h3>
+            <p className="text-[11px] text-slate-500 mt-0.5">Create a category to group your products.</p>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-slate-600 transition">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-600 transition cursor-pointer">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
-              Category Name <span className="text-rose-500">*</span>
+            <label className="block text-xs font-medium text-slate-700 mb-1">
+              Category Name
             </label>
             <input
               type="text"
@@ -60,60 +56,65 @@ export function AddCategoryModal({ isOpen, onClose, onAddCategory }: AddCategory
                 setName(e.target.value);
                 setError(null);
               }}
-              placeholder="e.g. Gourmet Cheeses"
-              className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
+              placeholder="e.g. Video card"
+              className="w-full h-9 px-3 rounded-lg border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
               autoFocus
               required
             />
+            <p className="text-[10px] text-slate-400 mt-1">
+              Category names must be unique.
+            </p>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
+            <label className="block text-xs font-medium text-slate-700 mb-1.5">
               Status
             </label>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 p-1 bg-slate-50 rounded-lg border border-slate-200">
               <button
                 type="button"
                 onClick={() => setStatus('Active')}
-                className={`flex-1 py-2 text-xs font-semibold rounded-lg border transition ${
+                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
                   status === 'Active'
-                    ? 'bg-slate-900 text-white border-slate-900'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                    ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
+                <span className={`w-1.5 h-1.5 rounded-full ${status === 'Active' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                 Active
               </button>
               <button
                 type="button"
                 onClick={() => setStatus('Inactive')}
-                className={`flex-1 py-2 text-xs font-semibold rounded-lg border transition ${
+                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
                   status === 'Inactive'
-                    ? 'bg-slate-900 text-white border-slate-900'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                    ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
+                <span className={`w-1.5 h-1.5 rounded-full ${status === 'Inactive' ? 'bg-rose-500' : 'bg-slate-400'}`} />
                 Inactive
               </button>
             </div>
           </div>
 
           {error && (
-            <div className="p-3 bg-rose-50 text-rose-700 text-xs rounded-xl border border-rose-200">
+            <div className="p-2.5 bg-rose-50 text-rose-700 text-xs rounded-lg border border-rose-200">
               {error}
             </div>
           )}
 
-          <div className="pt-2 flex items-center justify-end gap-3 border-t border-slate-100">
+          <div className="pt-2 flex items-center justify-end gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
+              className="px-4 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:bg-slate-50 transition cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition"
+              className="px-4 py-1.5 rounded-lg bg-[#0F1E36] text-white text-xs font-medium hover:bg-slate-800 transition cursor-pointer shadow-xs"
             >
               Add Category
             </button>
@@ -179,34 +180,22 @@ export function CategoryDetailsModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-slate-100 rounded-lg text-slate-700">
-              <Edit className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Category Details</h3>
-              <p className="text-xs text-slate-500">Edit the name or availability of this category</p>
-            </div>
+      <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-sm overflow-hidden">
+        {/* Header */}
+        <div className="px-5 pt-4 pb-1 flex items-start justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900">Category Details</h3>
+            <p className="text-[11px] text-slate-500 mt-0.5">Edit the name or availability of this category.</p>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-slate-600 transition">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-600 transition cursor-pointer">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSave} className="p-6 space-y-4">
-          {/* Badge indicator */}
-          <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-600">Assigned Products</span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-800">
-              {productCount} products use this category
-            </span>
-          </div>
-
+        <form onSubmit={handleSave} className="p-5 space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
-              Category Name <span className="text-rose-500">*</span>
+            <label className="block text-xs font-medium text-slate-700 mb-1">
+              Category Name
             </label>
             <input
               type="text"
@@ -215,67 +204,72 @@ export function CategoryDetailsModal({
                 setName(e.target.value);
                 setError(null);
               }}
-              className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
+              placeholder="Category Name"
+              className="w-full h-9 px-3 rounded-lg border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
               required
             />
+            <p className="text-[10px] text-slate-400 mt-1">
+              {productCount} products use this category
+            </p>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
+            <label className="block text-xs font-medium text-slate-700 mb-1.5">
               Status
             </label>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 p-1 bg-slate-50 rounded-lg border border-slate-200">
               <button
                 type="button"
                 onClick={() => setStatus('Active')}
-                className={`flex-1 py-2 text-xs font-semibold rounded-lg border transition ${
+                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
                   status === 'Active'
-                    ? 'bg-slate-900 text-white border-slate-900'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                    ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
+                <span className={`w-1.5 h-1.5 rounded-full ${status === 'Active' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                 Active
               </button>
               <button
                 type="button"
                 onClick={() => setStatus('Inactive')}
-                className={`flex-1 py-2 text-xs font-semibold rounded-lg border transition ${
+                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
                   status === 'Inactive'
-                    ? 'bg-slate-900 text-white border-slate-900'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                    ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
+                <span className={`w-1.5 h-1.5 rounded-full ${status === 'Inactive' ? 'bg-rose-500' : 'bg-slate-400'}`} />
                 Inactive
               </button>
             </div>
           </div>
 
           {error && (
-            <div className="p-3 bg-rose-50 text-rose-700 text-xs rounded-xl border border-rose-200">
+            <div className="p-2.5 bg-rose-50 text-rose-700 text-xs rounded-lg border border-rose-200">
               {error}
             </div>
           )}
 
-          <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+          <div className="pt-2 flex items-center justify-between">
             <button
               type="button"
               onClick={handleDelete}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg transition"
+              className="px-3.5 py-1.5 rounded-lg border border-rose-200 text-xs font-medium text-rose-600 hover:bg-rose-50 transition cursor-pointer"
             >
-              <Trash2 className="w-4 h-4" />
               Delete
             </button>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
+                className="px-4 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:bg-slate-50 transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition"
+                className="px-4 py-1.5 rounded-lg bg-[#0F1E36] text-white text-xs font-medium hover:bg-slate-800 transition cursor-pointer shadow-xs"
               >
                 Save changes
               </button>

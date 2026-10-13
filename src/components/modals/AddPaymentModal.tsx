@@ -89,115 +89,93 @@ export function AddPaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <div>
-            <h3 className="text-lg font-bold text-slate-900">Add Payment</h3>
-            <p className="text-xs text-slate-500">Record a customer payment against this order</p>
-          </div>
+        <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-slate-900">Add Payment</h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+            className="p-1 rounded text-slate-400 hover:text-slate-600 transition"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto flex-1">
-          {/* Order balance info */}
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center justify-between">
-            <div>
-              <p className="text-xs text-slate-500 font-medium">Order Total</p>
-              <p className="text-base font-bold text-slate-800">{formatCurrency(orderTotal)}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-slate-500 font-medium">Remaining Balance</p>
-              <p className="text-base font-bold text-emerald-600">{formatCurrency(currentBalance)}</p>
-            </div>
-          </div>
-
+        <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
           {/* Payment Method Selector Tabs */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-              Payment Method
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {(['Cash', 'Check', 'Bank Transfer'] as PaymentMethod[]).map((tab) => {
-                const isActive = method === tab;
-                return (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => {
-                      setMethod(tab);
-                      setError(null);
-                    }}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border text-xs font-semibold transition ${
-                      isActive
-                        ? 'border-slate-900 bg-slate-900 text-white shadow-xs'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300'
-                    }`}
-                  >
-                    {tab === 'Cash' && <Banknote className="w-5 h-5 mb-1.5" />}
-                    {tab === 'Check' && <CreditCard className="w-5 h-5 mb-1.5" />}
-                    {tab === 'Bank Transfer' && <Building2 className="w-5 h-5 mb-1.5" />}
-                    {tab}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="grid grid-cols-3 gap-2.5">
+            {(['Cash', 'Check', 'Bank Transfer'] as PaymentMethod[]).map((tab) => {
+              const isActive = method === tab;
+              return (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => {
+                    setMethod(tab);
+                    setError(null);
+                  }}
+                  className={`flex flex-col items-center justify-center p-2.5 rounded-lg border text-xs font-medium transition ${
+                    isActive
+                      ? 'border-[#0F1E36] bg-[#0F1E36] text-white'
+                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  {tab === 'Cash' && <Banknote className="w-4 h-4 mb-1" />}
+                  {tab === 'Check' && <CreditCard className="w-4 h-4 mb-1" />}
+                  {tab === 'Bank Transfer' && <Building2 className="w-4 h-4 mb-1" />}
+                  <span className="text-[11px]">{tab}</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Amount Paid */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
-              Amount Paid (₱) <span className="text-rose-500">*</span>
+            <label className="block text-xs font-medium text-slate-700 mb-1">
+              Amount Paid
             </label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₱</span>
-              <input
-                type="number"
-                step="0.01"
-                min="0.01"
-                value={amount}
-                onChange={(e) => {
-                  setAmount(e.target.value);
-                  setError(null);
-                }}
-                className="w-full h-11 pl-8 pr-3 rounded-xl border border-slate-300 bg-white text-slate-900 font-medium text-base focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition"
-                placeholder="0.00"
-                required
-              />
-            </div>
+            <input
+              type="number"
+              step="0.01"
+              min="0.01"
+              value={amount}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                setError(null);
+              }}
+              placeholder="0.00"
+              className="w-full h-9 px-3 rounded-lg border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
+              autoFocus
+              required
+            />
           </div>
 
           {/* Tab Specific Inputs */}
           {method === 'Cash' && (
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
-                  Reference Number / Receipt #
+                <label className="block text-xs font-medium text-slate-700 mb-1">
+                  Reference Number
                 </label>
                 <input
                   type="text"
                   value={referenceNumber}
                   onChange={(e) => setReferenceNumber(e.target.value)}
-                  placeholder="e.g. CSH-20261013"
-                  className="w-full h-10 px-3 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  placeholder="Reference Number"
+                  className="w-full h-9 px-3 rounded-lg border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
+                <label className="block text-xs font-medium text-slate-700 mb-1">
                   Note
                 </label>
                 <input
                   type="text"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  placeholder="e.g. Paid in cash at register"
-                  className="w-full h-10 px-3 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  placeholder="Note"
+                  className="w-full h-9 px-3 rounded-lg border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
                 />
               </div>
             </div>
@@ -329,20 +307,19 @@ export function AddPaymentModal({
           )}
 
           {/* Footer buttons */}
-          <div className="pt-2 flex items-center justify-end gap-3 border-t border-slate-100">
+          <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
+              className="px-4 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition shadow-xs flex items-center gap-1.5"
+              className="px-5 py-1.5 rounded-lg bg-[#0F1E36] text-white text-xs font-semibold hover:bg-slate-800 transition"
             >
-              <Check className="w-4 h-4" />
-              Add Payment
+              Submit
             </button>
           </div>
         </form>

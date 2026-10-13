@@ -76,19 +76,16 @@ export function BrowseProductsModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <div>
-            <h3 className="text-base font-bold text-slate-900">Browse Products</h3>
-            <p className="text-xs text-slate-500">Select active items to add to this order</p>
-          </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-slate-600 transition">
-            <X className="w-5 h-5" />
+        <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-slate-900">Product List</h3>
+          <button onClick={onClose} className="p-1 rounded-md text-slate-400 hover:text-slate-600 transition">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Search & Sort Bar */}
-        <div className="p-4 border-b border-slate-100 flex items-center gap-3 bg-white">
-          <div className="relative flex-1">
+        {/* Search Bar */}
+        <div className="p-3.5 border-b border-slate-100 bg-white">
+          <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
@@ -97,38 +94,38 @@ export function BrowseProductsModal({
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="Search product name, SKU or category..."
-              className="w-full h-10 pl-9 pr-3.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+              placeholder="Search Products"
+              className="w-full h-9 pl-9 pr-3 rounded-lg border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
             />
           </div>
-          <button
-            type="button"
-            onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
-            className="h-10 px-3.5 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 shrink-0"
-          >
-            <ArrowUpDown className="w-3.5 h-3.5" />
-            Sort: {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
-          </button>
         </div>
 
         {/* Product Table */}
         <div className="flex-1 overflow-y-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-[11px] font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-100 sticky top-0">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-white text-slate-700 border-b border-slate-200 font-semibold sticky top-0 z-10">
               <tr>
-                <th className="py-2.5 px-4 w-12 text-center">
+                <th className="py-2.5 px-3.5 w-10 text-center">
                   <span className="sr-only">Select</span>
                 </th>
-                <th className="py-2.5 px-4">Product Name</th>
-                <th className="py-2.5 px-4 text-right">Stock On Hand</th>
-                <th className="py-2.5 px-4 text-right">Unit Price</th>
+                <th className="py-2.5 px-3">
+                  <div
+                    onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+                    className="inline-flex items-center gap-1 cursor-pointer select-none hover:text-slate-900"
+                  >
+                    <span>Product Name</span>
+                    <span className="text-[10px] text-slate-400">⇅</span>
+                  </div>
+                </th>
+                <th className="py-2.5 px-3 text-right">Stock on hand</th>
+                <th className="py-2.5 px-4 text-right">Price</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {paginatedProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-8 text-center text-slate-400 text-sm">
-                    No products found matching your search.
+                  <td colSpan={4} className="py-8 text-center text-slate-400 text-xs">
+                    No products found matching &quot;{search}&quot;.
                   </td>
                 </tr>
               ) : (
@@ -139,59 +136,44 @@ export function BrowseProductsModal({
                       key={p.id}
                       onClick={() => toggleSelect(p.id)}
                       className={`cursor-pointer transition hover:bg-slate-50/80 ${
-                        isChecked ? 'bg-slate-50/60' : ''
+                        isChecked ? 'bg-slate-50/50' : ''
                       }`}
                     >
-                      <td className="py-3 px-4 text-center">
-                        <div
-                          className={`w-5 h-5 rounded-md border flex items-center justify-center transition mx-auto ${
-                            isChecked
-                              ? 'bg-slate-900 border-slate-900 text-white'
-                              : 'border-slate-300 bg-white'
-                          }`}
-                        >
-                          {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                        </div>
+                      <td className="py-2 px-3.5 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {}}
+                          className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-0 cursor-pointer"
+                        />
                       </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-3">
+                      <td className="py-2 px-3">
+                        <div className="flex items-center gap-2.5">
                           {p.imageUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={p.imageUrl}
                               alt={p.name}
-                              className="w-9 h-9 object-cover rounded-lg border border-slate-200 shrink-0"
+                              className="w-8 h-8 object-cover rounded-md border border-slate-200 shrink-0"
                             />
                           ) : (
-                            <div className="w-9 h-9 bg-slate-200 rounded-lg flex items-center justify-center text-slate-500 text-[10px] font-bold shrink-0">
-                              IMG
+                            <div className="w-8 h-8 bg-slate-100 rounded-md flex items-center justify-center text-slate-400 text-[10px] shrink-0 border border-slate-200">
+                              📷
                             </div>
                           )}
-                          <div className="min-w-0">
-                            <p className="font-semibold text-slate-900 text-sm truncate">{p.name}</p>
-                            <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-0.5">
-                              <span className="font-mono text-[10px] bg-slate-100 px-1 py-0.5 rounded text-slate-600">
-                                {p.sku}
-                              </span>
-                              <span>•</span>
-                              <span>{p.categoryName}</span>
-                            </div>
-                          </div>
+                          <span className="font-normal text-slate-800 text-xs truncate max-w-xs">
+                            {p.name}
+                          </span>
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-right">
-                        <span
-                          className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                            p.stockOnHand <= p.lowStockAlert
-                              ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                              : 'bg-slate-100 text-slate-700'
-                          }`}
-                        >
-                          {p.stockOnHand} left
-                        </span>
+                      <td className="py-2 px-3 text-right text-slate-700 text-xs">
+                        {p.stockOnHand}
                       </td>
-                      <td className="py-3 px-4 text-right font-semibold text-slate-900">
-                        {formatCurrency(p.price)}
+                      <td className="py-2 px-4 text-right text-slate-800 text-xs">
+                        {p.price.toLocaleString('en-US', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </td>
                     </tr>
                   );
@@ -201,52 +183,48 @@ export function BrowseProductsModal({
           </table>
         </div>
 
-        {/* Pagination & Counter Footer */}
-        <div className="px-6 py-3 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between text-xs text-slate-500">
-          <div>
-            <span className="font-bold text-slate-900">{selectedIds.length}</span> Selected
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                disabled={currentPage <= 1}
-                onClick={() => setCurrentPage((p) => p - 1)}
-                className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white disabled:opacity-40 hover:bg-slate-50 transition"
-              >
-                Prev
-              </button>
-              <span className="px-2">
-                {currentPage} of {totalPages}
-              </span>
-              <button
-                type="button"
-                disabled={currentPage >= totalPages}
-                onClick={() => setCurrentPage((p) => p + 1)}
-                className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white disabled:opacity-40 hover:bg-slate-50 transition"
-              >
-                Next
-              </button>
-            </div>
-          </div>
+        {/* Minimal pagination row */}
+        <div className="px-5 py-2 border-t border-slate-100 flex items-center justify-end text-xs text-slate-500 gap-2">
+          <button
+            type="button"
+            disabled={currentPage <= 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+            className="text-slate-400 hover:text-slate-700 disabled:opacity-30 px-1 font-bold"
+          >
+            &lt;
+          </button>
+          <span className="font-semibold text-slate-800">{currentPage}</span>
+          <button
+            type="button"
+            disabled={currentPage >= totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className="text-slate-400 hover:text-slate-700 disabled:opacity-30 px-1 font-bold"
+          >
+            &gt;
+          </button>
         </div>
 
-        {/* Actions Footer */}
-        <div className="px-6 py-3.5 border-t border-slate-100 bg-white flex items-center justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleAdd}
-            className="px-5 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition shadow-xs"
-          >
-            Add Products
-          </button>
+        {/* Footer Actions */}
+        <div className="px-5 py-3 border-t border-slate-200 bg-white flex items-center justify-between">
+          <div className="px-2.5 py-1 rounded bg-slate-100 text-[11px] font-medium text-slate-600">
+            {selectedIds.length} Selected
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleAdd}
+              className="px-5 py-1.5 rounded-lg bg-[#0F1E36] text-white text-xs font-semibold hover:bg-slate-800 transition"
+            >
+              Add
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -298,91 +276,94 @@ export function DiscountModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <div className="flex items-center gap-2">
-            <Tag className="w-5 h-5 text-slate-700" />
-            <h3 className="text-base font-bold text-slate-900">
-              {initialAmount > 0 ? 'Edit Discount Details' : 'Add Discount'}
-            </h3>
-          </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-slate-600 transition">
-            <X className="w-5 h-5" />
+      <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-sm overflow-hidden">
+        {/* Header */}
+        <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-slate-900">
+            {initialAmount > 0 ? 'Discount Details' : 'Add Discount'}
+          </h3>
+          <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-600 transition">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
-              Discount Amount (₱) <span className="text-rose-500">*</span>
+            <label className="block text-xs font-medium text-slate-700 mb-1">
+              Amount
             </label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₱</span>
-              <input
-                type="number"
-                step="0.01"
-                min="0.01"
-                value={amount}
-                onChange={(e) => {
-                  setAmount(e.target.value);
-                  setError(null);
-                }}
-                placeholder="0.00"
-                className="w-full h-11 pl-8 pr-3 rounded-xl border border-slate-300 bg-white text-slate-900 font-semibold text-base focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
-                autoFocus
-                required
-              />
-            </div>
+            <input
+              type="number"
+              step="0.01"
+              min="0.01"
+              value={amount}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                setError(null);
+              }}
+              placeholder="0.00"
+              className="w-full h-9 px-3 rounded-lg border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
+              autoFocus
+              required
+            />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
-              Reason / Note
+            <label className="block text-xs font-medium text-slate-700 mb-1">
+              Note
             </label>
             <input
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="e.g. VIP promo, Special clearance"
-              className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
+              placeholder="Note"
+              className="w-full h-9 px-3 rounded-lg border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
             />
           </div>
 
           {error && (
-            <div className="p-3 bg-rose-50 text-rose-700 text-xs rounded-xl border border-rose-200">
+            <div className="p-2.5 bg-rose-50 text-rose-700 text-xs rounded-lg border border-rose-200">
               {error}
             </div>
           )}
 
-          <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+          <div className="pt-2 flex items-center justify-end gap-2">
             {initialAmount > 0 && onRemoveDiscount ? (
-              <button
-                type="button"
-                onClick={() => {
-                  onRemoveDiscount();
-                  onClose();
-                }}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 transition"
-              >
-                Remove Discount
-              </button>
-            ) : <div />}
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition"
-              >
-                {initialAmount > 0 ? 'Save' : 'Apply Discount'}
-              </button>
-            </div>
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onRemoveDiscount();
+                    onClose();
+                  }}
+                  className="px-4 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
+                >
+                  Remove
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-1.5 rounded-lg bg-[#0F1E36] text-white text-xs font-semibold hover:bg-slate-800 transition"
+                >
+                  Save
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-1.5 rounded-lg bg-[#0F1E36] text-white text-xs font-semibold hover:bg-slate-800 transition"
+                >
+                  Submit
+                </button>
+              </>
+            )}
           </div>
         </form>
       </div>
@@ -435,94 +416,98 @@ export function ShippingModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <div className="flex items-center gap-2">
-            <Truck className="w-5 h-5 text-slate-700" />
-            <h3 className="text-base font-bold text-slate-900">
-              {initialAmount > 0 ? 'Edit Shipping Details' : 'Add Shipping Fee'}
-            </h3>
-          </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-slate-600 transition">
-            <X className="w-5 h-5" />
+      <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-sm overflow-hidden">
+        {/* Header */}
+        <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-slate-900">
+            {initialAmount > 0 ? 'Shipping Details' : 'Add Shipping'}
+          </h3>
+          <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-600 transition">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
-              Shipping Amount (₱) <span className="text-rose-500">*</span>
+            <label className="block text-xs font-medium text-slate-700 mb-1">
+              Amount
             </label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₱</span>
-              <input
-                type="number"
-                step="0.01"
-                min="0.01"
-                value={amount}
-                onChange={(e) => {
-                  setAmount(e.target.value);
-                  setError(null);
-                }}
-                placeholder="0.00"
-                className="w-full h-11 pl-8 pr-3 rounded-xl border border-slate-300 bg-white text-slate-900 font-semibold text-base focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
-                autoFocus
-                required
-              />
-            </div>
+            <input
+              type="number"
+              step="0.01"
+              min="0.01"
+              value={amount}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                setError(null);
+              }}
+              placeholder="0.00"
+              className="w-full h-9 px-3 rounded-lg border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
+              autoFocus
+              required
+            />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
-              Carrier / Delivery Note
+            <label className="block text-xs font-medium text-slate-700 mb-1">
+              Note
             </label>
             <input
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="e.g. Lalamove, Express courier, Van delivery"
-              className="w-full h-11 px-3.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
+              placeholder="Note"
+              className="w-full h-9 px-3 rounded-lg border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
             />
           </div>
 
           {error && (
-            <div className="p-3 bg-rose-50 text-rose-700 text-xs rounded-xl border border-rose-200">
+            <div className="p-2.5 bg-rose-50 text-rose-700 text-xs rounded-lg border border-rose-200">
               {error}
             </div>
           )}
 
-          <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+          <div className="pt-2 flex items-center justify-end gap-2">
             {initialAmount > 0 && onRemoveShipping ? (
-              <button
-                type="button"
-                onClick={() => {
-                  onRemoveShipping();
-                  onClose();
-                }}
-                className="text-xs font-semibold text-rose-600 hover:text-rose-700 transition"
-              >
-                Remove Shipping
-              </button>
-            ) : <div />}
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition"
-              >
-                {initialAmount > 0 ? 'Save' : 'Apply Shipping'}
-              </button>
-            </div>
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onRemoveShipping();
+                    onClose();
+                  }}
+                  className="px-4 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
+                >
+                  Remove
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-1.5 rounded-lg bg-[#0F1E36] text-white text-xs font-semibold hover:bg-slate-800 transition"
+                >
+                  Save
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-1.5 rounded-lg bg-[#0F1E36] text-white text-xs font-semibold hover:bg-slate-800 transition"
+                >
+                  Submit
+                </button>
+              </>
+            )}
           </div>
         </form>
       </div>
     </div>
   );
 }
+
