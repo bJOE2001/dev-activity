@@ -17,7 +17,6 @@ import {
   LogOut,
   Menu,
   X,
-  Plus,
   PanelLeftClose,
   PanelLeft,
 } from 'lucide-react';
@@ -329,43 +328,9 @@ export function AppLayout({ children }: AppLayoutProps) {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Header Bar for Desktop */}
-        <header className="h-16 bg-white border-b border-slate-200/80 px-8 hidden md:flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-2.5">
-            <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-slate-900 text-white">
-              Dev Activity
-            </span>
-            <span className="text-xs text-slate-400">·</span>
-            <span className="text-xs text-slate-500 font-medium">
-              Sales & Inventory Management
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/orders/create"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition shadow-2xs"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              + Create Order
-            </Link>
-
-            <Link
-              href="/profile"
-              className="flex items-center gap-2 pl-2 text-xs font-medium text-slate-700 hover:text-slate-900 transition"
-            >
-              <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center font-bold text-[11px] text-slate-700">
-                {user.firstName[0]}
-                {user.lastName[0]}
-              </div>
-              <span className="font-semibold text-xs">{user.firstName}</span>
-            </Link>
-          </div>
-        </header>
-
+      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
         {/* Page Content */}
-        <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
+        <main className="flex-1 p-5 md:p-8 overflow-x-hidden">
           {children}
         </main>
       </div>
