@@ -18,8 +18,8 @@ import {
   Menu,
   X,
   Plus,
-  Boxes,
-  SlidersHorizontal,
+  PanelLeftClose,
+  PanelLeft,
 } from 'lucide-react';
 import { ToastContainer } from '@/components/ui/ToastContainer';
 
@@ -33,6 +33,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { user, logout, isAuthenticated } = useStore();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [productGroupOpen, setProductGroupOpen] = useState(true);
   const [reportsGroupOpen, setReportsGroupOpen] = useState(true);
 
@@ -62,18 +63,18 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row text-slate-900 font-sans antialiased">
+    <div className="min-h-screen bg-slate-50/70 flex flex-col md:flex-row text-slate-900 font-sans antialiased">
       {/* Mobile Header Bar */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40">
+      <div className="md:hidden flex items-center justify-between p-4 bg-white text-slate-900 border-b border-slate-200 sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-xs">
+          <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center font-bold text-white text-xs shadow-xs">
             DA
           </div>
-          <span className="font-bold text-base tracking-tight">Dev Activity</span>
+          <span className="font-bold text-base tracking-tight text-slate-900">Dev Activity</span>
         </div>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition"
+          className="p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition"
         >
           {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
@@ -82,119 +83,146 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Sidebar Overlay for Mobile */}
       {sidebarOpen && (
         <div
-          className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-xs"
+          className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-2xs"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar Navigation */}
+      {/* Sidebar Navigation (Clean White matching Figma) */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-64 bg-slate-950 text-slate-200 border-r border-slate-900 flex flex-col transition-transform duration-200 ease-in-out shrink-0 ${
+        className={`fixed md:sticky top-0 left-0 z-50 h-screen ${
+          sidebarCollapsed ? 'w-20' : 'w-64'
+        } bg-white text-slate-800 border-r border-slate-200/90 flex flex-col transition-all duration-200 ease-in-out shrink-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         {/* Brand Header */}
-        <div className="p-5 border-b border-slate-900 flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-extrabold text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-              <Boxes className="w-5 h-5" />
+        <div className="h-16 px-5 border-b border-slate-100 flex items-center justify-between">
+          <Link href="/dashboard" className="flex items-center gap-3 group min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
+              DA
             </div>
-            <div>
-              <h1 className="font-bold text-base text-white tracking-tight leading-tight">Dev Activity</h1>
-              <p className="text-[11px] font-medium text-slate-400">Sales & Inventory</p>
-            </div>
+            {!sidebarCollapsed && (
+              <span className="font-bold text-sm text-slate-900 tracking-tight truncate">
+                Dev Activity
+              </span>
+            )}
           </Link>
-          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-slate-900 text-slate-400 border border-slate-800">
-            v1.0
-          </span>
+          <button
+            type="button"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="hidden md:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {sidebarCollapsed ? (
+              <PanelLeft className="w-4 h-4" />
+            ) : (
+              <PanelLeftClose className="w-4 h-4" />
+            )}
+          </button>
         </div>
 
         {/* Navigation Menu */}
-        <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-1.5">
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
           {/* Dashboard */}
           <Link
             href="/dashboard"
             onClick={() => setSidebarOpen(false)}
+            title="Dashboard"
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
               isNavActive('/dashboard')
-                ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                ? 'bg-slate-100 text-slate-900 font-semibold'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             <LayoutDashboard className="w-4 h-4 shrink-0" />
-            Dashboard
+            {!sidebarCollapsed && <span>Dashboard</span>}
           </Link>
 
           {/* Orders */}
           <Link
             href="/orders"
             onClick={() => setSidebarOpen(false)}
+            title="Order List"
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
               isNavActive('/orders')
-                ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                ? 'bg-slate-100 text-slate-900 font-semibold'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             <ShoppingCart className="w-4 h-4 shrink-0" />
-            Order List
+            {!sidebarCollapsed && <span>Order List</span>}
           </Link>
 
           {/* Customers */}
           <Link
             href="/customers"
             onClick={() => setSidebarOpen(false)}
+            title="Customer List"
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
               isNavActive('/customers')
-                ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                ? 'bg-slate-100 text-slate-900 font-semibold'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             <Users className="w-4 h-4 shrink-0" />
-            Customer List
+            {!sidebarCollapsed && <span>Customer List</span>}
           </Link>
 
           {/* Product Group (Collapsible) */}
           <div className="pt-2">
-            <button
-              type="button"
-              onClick={() => setProductGroupOpen(!productGroupOpen)}
-              className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-200 transition"
-            >
-              <span className="flex items-center gap-2">
-                <Package className="w-3.5 h-3.5" />
-                Product
-              </span>
-              {productGroupOpen ? (
-                <ChevronDown className="w-3.5 h-3.5" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5" />
-              )}
-            </button>
+            {!sidebarCollapsed ? (
+              <button
+                type="button"
+                onClick={() => setProductGroupOpen(!productGroupOpen)}
+                className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 transition"
+              >
+                <span className="flex items-center gap-2.5">
+                  <Package className="w-4 h-4 text-slate-500" />
+                  Product
+                </span>
+                {productGroupOpen ? (
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                ) : (
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                )}
+              </button>
+            ) : (
+              <Link
+                href="/products"
+                title="Product List"
+                className={`flex items-center justify-center p-2.5 rounded-xl text-slate-600 hover:bg-slate-50 ${
+                  pathname.startsWith('/products') ? 'bg-slate-100 text-slate-900' : ''
+                }`}
+              >
+                <Package className="w-4 h-4" />
+              </Link>
+            )}
 
-            {productGroupOpen && (
-              <div className="ml-3 pl-3 border-l border-slate-800 space-y-1 mt-1">
+            {!sidebarCollapsed && productGroupOpen && (
+              <div className="ml-3 pl-3 border-l border-slate-200 space-y-0.5 mt-1">
                 <Link
                   href="/products"
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
                     pathname === '/products'
-                      ? 'bg-blue-600/90 text-white font-semibold'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                      ? 'bg-slate-100 text-slate-900 font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
-                  <Package className="w-4 h-4 shrink-0" />
+                  <Package className="w-3.5 h-3.5 shrink-0" />
                   Product List
                 </Link>
                 <Link
                   href="/categories"
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
                     pathname === '/categories'
-                      ? 'bg-blue-600/90 text-white font-semibold'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                      ? 'bg-slate-100 text-slate-900 font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
-                  <FolderTree className="w-4 h-4 shrink-0" />
+                  <FolderTree className="w-3.5 h-3.5 shrink-0" />
                   Categories
                 </Link>
               </div>
@@ -203,46 +231,58 @@ export function AppLayout({ children }: AppLayoutProps) {
 
           {/* Reports Group (Collapsible) */}
           <div className="pt-2">
-            <button
-              type="button"
-              onClick={() => setReportsGroupOpen(!reportsGroupOpen)}
-              className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-200 transition"
-            >
-              <span className="flex items-center gap-2">
-                <BarChart3 className="w-3.5 h-3.5" />
-                Reports
-              </span>
-              {reportsGroupOpen ? (
-                <ChevronDown className="w-3.5 h-3.5" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5" />
-              )}
-            </button>
+            {!sidebarCollapsed ? (
+              <button
+                type="button"
+                onClick={() => setReportsGroupOpen(!reportsGroupOpen)}
+                className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 transition"
+              >
+                <span className="flex items-center gap-2.5">
+                  <BarChart3 className="w-4 h-4 text-slate-500" />
+                  Reports
+                </span>
+                {reportsGroupOpen ? (
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                ) : (
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                )}
+              </button>
+            ) : (
+              <Link
+                href="/reports/sales"
+                title="Sales Report"
+                className={`flex items-center justify-center p-2.5 rounded-xl text-slate-600 hover:bg-slate-50 ${
+                  pathname.startsWith('/reports') ? 'bg-slate-100 text-slate-900' : ''
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+              </Link>
+            )}
 
-            {reportsGroupOpen && (
-              <div className="ml-3 pl-3 border-l border-slate-800 space-y-1 mt-1">
+            {!sidebarCollapsed && reportsGroupOpen && (
+              <div className="ml-3 pl-3 border-l border-slate-200 space-y-0.5 mt-1">
                 <Link
                   href="/reports/sales"
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
                     pathname === '/reports/sales'
-                      ? 'bg-blue-600/90 text-white font-semibold'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                      ? 'bg-slate-100 text-slate-900 font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
-                  <FileSpreadsheet className="w-4 h-4 shrink-0" />
+                  <FileSpreadsheet className="w-3.5 h-3.5 shrink-0" />
                   Sales Report
                 </Link>
                 <Link
                   href="/reports/inventory"
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
                     pathname === '/reports/inventory'
-                      ? 'bg-blue-600/90 text-white font-semibold'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                      ? 'bg-slate-100 text-slate-900 font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
-                  <BarChart3 className="w-4 h-4 shrink-0" />
+                  <BarChart3 className="w-3.5 h-3.5 shrink-0" />
                   Inventory Report
                 </Link>
               </div>
@@ -250,66 +290,62 @@ export function AppLayout({ children }: AppLayoutProps) {
           </div>
         </div>
 
-        {/* Sidebar Footer with User Details & Logout */}
-        <div className="p-3 border-t border-slate-900 bg-slate-950/80">
-          <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-slate-800/80">
+        {/* Sidebar Footer with User Details & Logout (Figma matching) */}
+        <div className="p-3 border-t border-slate-200/90 bg-white">
+          <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition">
             <Link
               href="/profile"
               onClick={() => setSidebarOpen(false)}
-              className="flex items-center gap-2.5 min-w-0 flex-1 hover:opacity-90 transition group"
+              className="flex items-center gap-2.5 min-w-0 flex-1 group"
             >
-              <div className="w-8 h-8 rounded-full bg-blue-600/30 text-blue-400 border border-blue-500/40 flex items-center justify-center font-bold text-xs shrink-0 group-hover:border-blue-400">
+              <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">
                 {user.firstName[0]}
                 {user.lastName[0]}
               </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-white truncate leading-tight">
-                  {user.firstName} {user.lastName}
-                </p>
-                <span className="text-[10px] text-slate-400 block font-medium">
-                  {user.role}
-                </span>
-              </div>
+              {!sidebarCollapsed && (
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-slate-900 truncate leading-tight group-hover:text-blue-600">
+                    {user.firstName} {user.lastName}
+                  </p>
+                  <span className="text-[10px] text-slate-400 block font-medium">
+                    {user.role}
+                  </span>
+                </div>
+              )}
             </Link>
 
-            <div className="flex items-center gap-1 shrink-0 ml-1">
-              <Link
-                href="/profile"
-                title="Manage Profile"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-              </Link>
+            {!sidebarCollapsed && (
               <button
                 type="button"
                 onClick={handleLogout}
                 title="Logout"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 transition"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
               >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
-            </div>
+            )}
           </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Header Bar */}
-        <header className="h-16 bg-white border-b border-slate-200 px-6 hidden md:flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-              Dev Activity System
+        {/* Top Header Bar for Desktop */}
+        <header className="h-16 bg-white border-b border-slate-200/80 px-8 hidden md:flex items-center justify-between sticky top-0 z-30">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-slate-900 text-white">
+              Dev Activity
             </span>
-            <span className="text-xs text-slate-400 font-medium">
-              Ateb Venue · Oct 2026
+            <span className="text-xs text-slate-400">·</span>
+            <span className="text-xs text-slate-500 font-medium">
+              Sales & Inventory Management
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Link
               href="/orders/create"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition shadow-2xs"
             >
               <Plus className="w-3.5 h-3.5" />
               + Create Order
@@ -323,7 +359,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 {user.firstName[0]}
                 {user.lastName[0]}
               </div>
-              <span className="font-semibold">{user.firstName}</span>
+              <span className="font-semibold text-xs">{user.firstName}</span>
             </Link>
           </div>
         </header>
